@@ -31,7 +31,6 @@
             btnReset = new Button();
             btnCargar = new Button();
             cmbMunicipio = new ComboBox();
-            cmbEntidad = new ComboBox();
             dgvInformacion = new DataGridView();
             dtpInicio = new DateTimePicker();
             dtpFin = new DateTimePicker();
@@ -41,6 +40,7 @@
             label3 = new Label();
             ofdExcel = new OpenFileDialog();
             txtTotalAfiliados = new TextBox();
+            txtEntidad = new TextBox();
             ((System.ComponentModel.ISupportInitialize)dgvInformacion).BeginInit();
             SuspendLayout();
             // 
@@ -73,15 +73,6 @@
             cmbMunicipio.TabIndex = 2;
             cmbMunicipio.SelectedIndexChanged += cmbMunicipio_SelectedIndexChanged;
             // 
-            // cmbEntidad
-            // 
-            cmbEntidad.FormattingEnabled = true;
-            cmbEntidad.Location = new Point(130, 74);
-            cmbEntidad.Name = "cmbEntidad";
-            cmbEntidad.Size = new Size(182, 33);
-            cmbEntidad.TabIndex = 3;
-            cmbEntidad.SelectedIndexChanged += cmbEntidad_SelectedIndexChanged;
-            // 
             // dgvInformacion
             // 
             dgvInformacion.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -95,7 +86,7 @@
             // 
             dtpInicio.Location = new Point(35, 537);
             dtpInicio.Name = "dtpInicio";
-            dtpInicio.Size = new Size(300, 31);
+            dtpInicio.Size = new Size(334, 31);
             dtpInicio.TabIndex = 5;
             dtpInicio.ValueChanged += dtpInicio_ValueChanged;
             // 
@@ -103,7 +94,7 @@
             // 
             dtpFin.Location = new Point(35, 602);
             dtpFin.Name = "dtpFin";
-            dtpFin.Size = new Size(300, 31);
+            dtpFin.Size = new Size(334, 31);
             dtpFin.TabIndex = 6;
             // 
             // chkFiltrarFecha
@@ -122,9 +113,9 @@
             label1.AutoSize = true;
             label1.Location = new Point(79, 442);
             label1.Name = "label1";
-            label1.Size = new Size(164, 25);
+            label1.Size = new Size(149, 25);
             label1.TabIndex = 8;
-            label1.Text = "Total de afiliados: 0";
+            label1.Text = "Total de afiliados:";
             // 
             // label2
             // 
@@ -155,11 +146,19 @@
             txtTotalAfiliados.Size = new Size(150, 31);
             txtTotalAfiliados.TabIndex = 11;
             // 
+            // txtEntidad
+            // 
+            txtEntidad.Location = new Point(133, 76);
+            txtEntidad.Name = "txtEntidad";
+            txtEntidad.Size = new Size(179, 31);
+            txtEntidad.TabIndex = 12;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1197, 684);
+            Controls.Add(txtEntidad);
             Controls.Add(txtTotalAfiliados);
             Controls.Add(label3);
             Controls.Add(label2);
@@ -168,7 +167,6 @@
             Controls.Add(dtpFin);
             Controls.Add(dtpInicio);
             Controls.Add(dgvInformacion);
-            Controls.Add(cmbEntidad);
             Controls.Add(cmbMunicipio);
             Controls.Add(btnCargar);
             Controls.Add(btnReset);
@@ -184,7 +182,6 @@
         private Button btnReset;
         private Button btnCargar;
         private ComboBox cmbMunicipio;
-        private ComboBox cmbEntidad;
         private DataGridView dgvInformacion;
         private DateTimePicker dtpInicio;
         private DateTimePicker dtpFin;
@@ -194,5 +191,6 @@
         private Label label3;
         private OpenFileDialog ofdExcel;
         private TextBox txtTotalAfiliados;
+        private TextBox txtEntidad;
     }
 }

@@ -31,7 +31,7 @@ namespace Afiliados
         private void CargarExcel(string path)
         {
             DataTable dt = new DataTable();
-            ExcelPackage.License.SetNonCommercialPersonal("Jose Luis Mota Espeleta");
+            ExcelPackage.License.SetNonCommercialPersonal("Carlos Rodriguez Hernandez");
             using (var package = new ExcelPackage(new System.IO.FileInfo(path)))
             {
                 if (package.Workbook.Worksheets.Count == 0)
@@ -42,56 +42,46 @@ namespace Afiliados
 
                 ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
 
-                // Definir nombres de columnas
                 string[] columnas = { "ID", "ENTIDAD", "MUNICIPIO", "NOMBRE", "FECHA DE AFILICION", "ESTATUS" };
                 foreach (var col in columnas)
                     dt.Columns.Add(col);
 
-                // Fila donde empiezan los datos (ajusta a 3 si tu Excel lo requiere)
                 int inicioFila = 2;
                 int ultimaFila = worksheet.Dimension.End.Row;
 
                 for (int i = inicioFila; i <= ultimaFila; i++)
                 {
-                    // si la celda de ID está vacía, asumimos fin de los registros
                     if (string.IsNullOrWhiteSpace(worksheet.Cells[i, 1].Text))
                         break;
 
                     DataRow row = dt.NewRow();
-
                     for (int j = 1; j <= dt.Columns.Count; j++)
-                    {
                         row[j - 1] = worksheet.Cells[i, j].Text;
-                    }
 
                     dt.Rows.Add(row);
                 }
             }
 
-            // Guardamos tabla global para filtros
             afiliadosTable = dt;
 
-            // Mostrar en DataGridView
+            //Mostrar en DataGridView
             dgvInformacion.DataSource = afiliadosTable;
 
-            // Llenar combo ENTIDAD
-            cmbEntidad.Items.Clear();
-            var entidades = afiliadosTable.AsEnumerable()
-                .Select(r => r.Field<string>("ENTIDAD"))
-                .Distinct()
-                .OrderBy(e => e);
+            //Obtener la entidad directamente desde la primera fila del Excel
+            if (afiliadosTable.Rows.Count > 0)
+            {
+                txtEntidad.Text = afiliadosTable.Rows[0]["ENTIDAD"].ToString();
+            }
 
-            foreach (var e1 in entidades)
-                cmbEntidad.Items.Add(e1);
-
-            // Llenar combo MUNICIPIO
+            // Llenar municipios normalmente
             LlenarMunicipios();
 
-            // Mostrar total de afiliados
+            // Mostrar total
             txtTotalAfiliados.Text = afiliadosTable.Rows.Count.ToString();
         }
 
-       
+
+
             private void LlenarMunicipios()
         {
             cmbMunicipio.Items.Clear();
@@ -100,11 +90,20 @@ namespace Afiliados
 
             var municipios = afiliadosTable.AsEnumerable()
                 .Select(r => r.Field<string>("MUNICIPIO"))
+                .Where(m => !string.IsNullOrWhiteSpace(m)) // ignorar vacios en la lista normal
                 .Distinct()
-                .OrderBy(m => m);
+                .OrderBy(m => m)
+                .ToList();
+
+            // Agregar opciones especiales
+            cmbMunicipio.Items.Add("Todos");
+            cmbMunicipio.Items.Add("Ninguno");
 
             foreach (var m in municipios)
                 cmbMunicipio.Items.Add(m);
+
+            // Seleccionar Todos por default
+            cmbMunicipio.SelectedIndex = 0;
         }
 
         //private void LlenarMunicipios()
@@ -148,64 +147,47 @@ namespace Afiliados
         //    txtTotalAfiliados.Text = afiliadosTable.Rows.Count.ToString();
         //}
 
-        private void cmbEntidad_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (cmbEntidad.SelectedItem != null)
-            {
-                string entidad = cmbEntidad.SelectedItem.ToString();
-
-                cmbMunicipio.Items.Clear();
-
-                var municipios = afiliadosTable.AsEnumerable()
-                    .Where(r => r.Field<string>("ENTIDAD") == entidad)
-                    .Select(r => r.Field<string>("MUNICIPIO"))
-                    .Distinct()
-                    .OrderBy(m => m);
-
-                foreach (var m in municipios)
-                    cmbMunicipio.Items.Add(m);
-            }
-        }
+        
 
         
 
         private void FiltrarDatos()
         {
-            if (afiliadosTable == null) return;
+            //if (afiliadosTable == null) return;
 
-            var query = afiliadosTable.AsEnumerable();
+            //var query = afiliadosTable.AsEnumerable();
 
-            // Filtrar por entidad
-            if (cmbEntidad.SelectedItem != null)
-                query = query.Where(r => r.Field<string>("ENTIDAD") == cmbEntidad.SelectedItem.ToString());
+            //// Filtrar por entidad
+            //if (cmbEntidad.SelectedItem != null)
+            //    query = query.Where(r => r.Field<string>("ENTIDAD") == cmbEntidad.SelectedItem.ToString());
 
-            // Filtrar por municipio
-            if (cmbMunicipio.SelectedItem != null)
-                query = query.Where(r => r.Field<string>("MUNICIPIO") == cmbMunicipio.SelectedItem.ToString());
+            //// Filtrar por municipio
+            //if (cmbMunicipio.SelectedItem != null)
+            //    query = query.Where(r => r.Field<string>("MUNICIPIO") == cmbMunicipio.SelectedItem.ToString());
 
-            // Filtrar por rango de fechas
-            if (chkFiltrarFecha.Checked)
-            {
-                DateTime inicio = dtpInicio.Value.Date;
-                DateTime fin = dtpFin.Value.Date;
+            //// Filtrar por rango de fechas
+            //if (chkFiltrarFecha.Checked)
+            //{
+            //    DateTime inicio = dtpInicio.Value.Date;
+            //    DateTime fin = dtpFin.Value.Date;
 
-                query = query.Where(r =>
-                {
-                    DateTime fecha;
-                    if (DateTime.TryParse(r.Field<string>("FECHA DE AFILICION"), out fecha))
-                        return fecha >= inicio && fecha <= fin;
-                    return false;
-                });
-            }
+            //    query = query.Where(r =>
+            //    {
+            //        DateTime fecha;
+            //        if (DateTime.TryParse(r.Field<string>("FECHA DE AFILICION"), out fecha))
+            //            return fecha >= inicio && fecha <= fin;
+            //        return false;
+            //    });
+            //}
 
-            // Cargar en el DataGridView
-            if (query.Any())
-                dgvInformacion.DataSource = query.CopyToDataTable();
-            else
-                dgvInformacion.DataSource = null;
+            //// Cargar en el DataGridView
+            //if (query.Any())
+            //    dgvInformacion.DataSource = query.CopyToDataTable();
+            //else
+            //    dgvInformacion.DataSource = null;
 
-            // Actualizar total de afiliados
-            txtTotalAfiliados.Text = query.Count().ToString();
+            //// Actualizar total de afiliados
+            //txtTotalAfiliados.Text = query.Count().ToString();
         }
 
         
@@ -213,13 +195,14 @@ namespace Afiliados
         {
             if (afiliadosTable == null) return;
 
-            string entidadSeleccionada = cmbEntidad.SelectedItem?.ToString();
             string municipioSeleccionado = cmbMunicipio.SelectedItem?.ToString();
 
             var filtrados = afiliadosTable.AsEnumerable()
                 .Where(r =>
-                    (string.IsNullOrEmpty(entidadSeleccionada) || r.Field<string>("ENTIDAD") == entidadSeleccionada) &&
-                    (string.IsNullOrEmpty(municipioSeleccionado) || r.Field<string>("MUNICIPIO") == municipioSeleccionado)
+                    municipioSeleccionado == "Todos" ||
+                    (municipioSeleccionado == "Ninguno" && string.IsNullOrWhiteSpace(r.Field<string>("MUNICIPIO"))) ||
+                    (municipioSeleccionado != "Todos" && municipioSeleccionado != "Ninguno" &&
+                     r.Field<string>("MUNICIPIO") == municipioSeleccionado)
                 );
 
             dgvInformacion.DataSource = filtrados.Any() ? filtrados.CopyToDataTable() : null;
@@ -227,7 +210,7 @@ namespace Afiliados
         }
         private void cmbMunicipio_SelectedIndexChanged(object sender, EventArgs e)
         {
-            FiltrarDatos();
+            AplicarFiltros();
         }
 
         private void dtpInicio_ValueChanged(object sender, EventArgs e)
@@ -245,7 +228,7 @@ namespace Afiliados
             if (afiliadosTable == null) return;
 
             dgvInformacion.DataSource = afiliadosTable;
-            cmbEntidad.SelectedIndex = -1;
+           
             cmbMunicipio.SelectedIndex = -1;
             chkFiltrarFecha.Checked = false;
 
