@@ -153,11 +153,11 @@ namespace Afiliados
 
         private void FiltrarDatos()
         {
-            //if (afiliadosTable == null) return;
+            if (afiliadosTable == null) return;
 
-            //var query = afiliadosTable.AsEnumerable();
+            var query = afiliadosTable.AsEnumerable();
 
-            //// Filtrar por entidad
+            // Filtrar por entidad
             //if (cmbEntidad.SelectedItem != null)
             //    query = query.Where(r => r.Field<string>("ENTIDAD") == cmbEntidad.SelectedItem.ToString());
 
@@ -165,29 +165,29 @@ namespace Afiliados
             //if (cmbMunicipio.SelectedItem != null)
             //    query = query.Where(r => r.Field<string>("MUNICIPIO") == cmbMunicipio.SelectedItem.ToString());
 
-            //// Filtrar por rango de fechas
-            //if (chkFiltrarFecha.Checked)
-            //{
-            //    DateTime inicio = dtpInicio.Value.Date;
-            //    DateTime fin = dtpFin.Value.Date;
+            // Filtrar por rango de fechas
+            if (chkFiltrarFecha.Checked)
+            {
+                DateTime inicio = dtpInicio.Value.Date;
+                DateTime fin = dtpFin.Value.Date;
 
-            //    query = query.Where(r =>
-            //    {
-            //        DateTime fecha;
-            //        if (DateTime.TryParse(r.Field<string>("FECHA DE AFILICION"), out fecha))
-            //            return fecha >= inicio && fecha <= fin;
-            //        return false;
-            //    });
-            //}
+                query = query.Where(r =>
+                {
+                    DateTime fecha;
+                    if (DateTime.TryParse(r.Field<string>("FECHA DE AFILICION"), out fecha))
+                        return fecha >= inicio && fecha <= fin;
+                    return false;
+                });
+            }
 
-            //// Cargar en el DataGridView
-            //if (query.Any())
-            //    dgvInformacion.DataSource = query.CopyToDataTable();
-            //else
-            //    dgvInformacion.DataSource = null;
+            // Cargar en el DataGridView
+            if (query.Any())
+                dgvInformacion.DataSource = query.CopyToDataTable();
+            else
+                dgvInformacion.DataSource = null;
 
-            //// Actualizar total de afiliados
-            //txtTotalAfiliados.Text = query.Count().ToString();
+            // Actualizar total de afiliados
+            txtTotalAfiliados.Text = query.Count().ToString();
         }
 
         
