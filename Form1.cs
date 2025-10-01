@@ -76,7 +76,7 @@ namespace Afiliados
             // Llenar municipios normalmente
             LlenarMunicipios();
 
-            // Mostrar total
+            //total
             txtTotalAfiliados.Text = afiliadosTable.Rows.Count.ToString();
         }
 
@@ -134,7 +134,7 @@ namespace Afiliados
             else
                 dgvInformacion.DataSource = null;
 
-            // Actualiza
+            //act total
             txtTotalAfiliados.Text = query.Count().ToString();
         }
 
