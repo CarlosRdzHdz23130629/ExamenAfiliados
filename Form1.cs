@@ -64,19 +64,19 @@ namespace Afiliados
 
             afiliadosTable = dt;
 
-            //Mostrar en DataGridView
+            //mostrar en DataGridView
             dgvInformacion.DataSource = afiliadosTable;
 
-            //Obtener la entidad directamente desde la primera fila del Excel
+            //tomam la entidad del excel
             if (afiliadosTable.Rows.Count > 0)
             {
                 txtEntidad.Text = afiliadosTable.Rows[0]["ENTIDAD"].ToString();
             }
 
-            // Llenar municipios normalmente
+            
             LlenarMunicipios();
 
-            //total
+            //total afiliados
             txtTotalAfiliados.Text = afiliadosTable.Rows.Count.ToString();
         }
 
@@ -90,7 +90,7 @@ namespace Afiliados
 
             var municipios = afiliadosTable.AsEnumerable()
                 .Select(r => r.Field<string>("MUNICIPIO"))
-                .Where(m => !string.IsNullOrWhiteSpace(m)) // ignorar vacios en la lista normal
+                .Where(m => !string.IsNullOrWhiteSpace(m)) 
                 .Distinct()
                 .OrderBy(m => m)
                 .ToList();
@@ -113,7 +113,7 @@ namespace Afiliados
             var query = afiliadosTable.AsEnumerable();
 
 
-            // Filtrar por fechas
+            //filtrar por fechas
             if (chkFiltrarFecha.Checked)
             {
                 DateTime inicio = dtpInicio.Value.Date;
@@ -128,7 +128,7 @@ namespace Afiliados
                 });
             }
 
-            // Cargar en el DataGridView
+            //carrga en el DataGridView
             if (query.Any())
                 dgvInformacion.DataSource = query.CopyToDataTable();
             else
